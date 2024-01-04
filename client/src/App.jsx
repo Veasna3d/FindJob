@@ -14,7 +14,6 @@ import {
 function Layout() {
   const user = true;
   const location = useLocation();
-
   return user ? (
     <Outlet />
   ) : (
@@ -23,8 +22,9 @@ function Layout() {
 }
 
 function App() {
+  const user = {};
   return (
-    <main>
+    <main className="bg-[#f7fdfd]">
       <Navbar />
       <Routes>
         <Route element={<Layout />}>
@@ -36,7 +36,7 @@ function App() {
           <Route path="/companies" element={<Companies />} />
           <Route
             path={
-              user?.user.accountType === "seeker"
+              user?.user?.accountType === "seeker"
                 ? "/user-profile"
                 : "/user-profile/:id"
             }
