@@ -10,10 +10,12 @@ import {
   UploadJob,
   UserProfile,
 } from "./pages";
+import { useSelector } from "react-redux";
 
 function Layout() {
-  const user = true;
+  const { user } = useSelector((state) => state.user);
   const location = useLocation();
+
   return user ? (
     <Outlet />
   ) : (
@@ -22,7 +24,8 @@ function Layout() {
 }
 
 function App() {
-  const user = {};
+  const { user } = useSelector((state) => state.user);
+
   return (
     <main className="bg-[#f7fdfd]">
       <Navbar />
@@ -42,10 +45,10 @@ function App() {
             }
             element={<UserProfile />}
           />
-          <Route path="/company-profile" element={<CompanyProfile />} />
-          <Route path="/company-profile/:id" element={<CompanyProfile />} />
-          <Route path="/upload-job" element={<UploadJob />} />
-          <Route path="/job-detail/:id" element={<JobDetail />} />
+          <Route path={"/company-profile"} element={<CompanyProfile />} />
+          <Route path={"/company-profile/:id"} element={<CompanyProfile />} />
+          <Route path={"/upload-job"} element={<UploadJob />} />
+          <Route path={"/job-detail/:id" }element={<JobDetail />} />
         </Route>
 
         <Route path="/about-us" element={<About />} />
