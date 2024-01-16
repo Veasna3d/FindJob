@@ -7,7 +7,7 @@ import { AiOutlineMail } from "react-icons/ai";
 import { FiPhoneCall, FiEdit3, FiUpload } from "react-icons/fi";
 import { Link, useParams } from "react-router-dom";
 import { companies, jobs } from "../utils/data";
-import { CustomButton, Loading, TextInput } from "../components";
+import { CustomButton, JobCard, Loading, TextInput } from "../components";
 
 const CompanyForm = ({ open, setOpen }) => {
   const { user } = useSelector((state) => state.user);
@@ -217,7 +217,14 @@ const CompanyProfile = () => {
       <div className="w-full mt-20 flex flex-col gap-2">
         <p>Jobs Posted</p>
         <div className="flex flex-wrap gap-3">
-          {/* Job Card */}
+          {jobs?.map((job, index) => {
+            const data = {
+              name: info?.name,
+              email: info?.email,
+              ...job,
+            };
+            return <JobCard job={data} key={index} />;
+          })}
         </div>
       </div>
     </div>
