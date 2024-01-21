@@ -46,7 +46,7 @@ CompanySchema.methods.comparePassword = async function (userPassword) {
   return isMatch;
 };
 
-CompanySchema.methods.createToken = async function () {
+CompanySchema.methods.createJWT = async function () {
   return JWT.sign({ userId: this._id }, process.env.JWT_SECRET_KEY, {
     expiresIn: "1d",
   });
