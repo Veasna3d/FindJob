@@ -175,6 +175,10 @@ export const getCompanies = async (req, res, next) => {
       queryResult = queryResult.sort("name");
     }
 
+    if (sort === "Z-A") {
+      queryResult = queryResult.sort("-name");
+    }
+
     //Pagination
 
     const page = Number(req.query.page) || 1;
@@ -225,6 +229,9 @@ export const getCompanyJobListing = async (req, res, next) => {
     }
     if (sort === "A-Z") {
       sorting = "name";
+    }
+    if (sort === "Z-A") {
+      sorting = "-name";
     }
 
     let queryResult = await Companies.findById({ _id: id }).populate({
