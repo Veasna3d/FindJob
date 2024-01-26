@@ -4,30 +4,39 @@ import { response } from "express";
 
 export const register = async (req, res, next) => {
   const { name, email, password } = req.body;
+
+  //validate fields
   if (!name) {
-    next("Name is required");
+    next("Company Name is required!");
+    return;
   }
   if (!email) {
-    next("Email is required");
+    next("Email address is required!");
+    return;
   }
   if (!password) {
-    next("Password is required");
+    next("Password is required and must be greater than 6 characters");
+    return;
   }
 
   try {
     const accountExist = await Companies.findOne({ email });
+
     if (accountExist) {
-      next("Email Already Registered, Please Login");
+      next("Email Already Registered. Please Login");
       return;
     }
 
+    // create a new account
     const company = await Companies.create({
       name,
       email,
       password,
     });
 
+    // user token
     const token = company.createJWT();
+
     res.status(201).json({
       success: true,
       message: "Company Account Created Successfully",
@@ -45,7 +54,7 @@ export const register = async (req, res, next) => {
 };
 
 export const signIn = async (req, res, next) => {
-  const { email, password } = res.body;
+  const { email, password } = req.body;
 
   try {
     if (!email || !password) {
@@ -85,7 +94,7 @@ export const signIn = async (req, res, next) => {
 };
 
 export const updateCompanyProfile = async (req, res, next) => {
-  const { name, contact, location, profileUrl, about } = res.body;
+  const { name, contact, location, profileUrl, about } = req.body;
 
   try {
     if (!name || !contact || !location || !profileUrl || !about) {

@@ -22,6 +22,8 @@ const limiter = rateLimit({
 });
 
 router.post("/register", limiter, register);
+router.post("/login", limiter, signIn);
+
 router.post("/get-company-profile", userAuth, getCompanyProfile);
 router.post("get-company-joblisting", userAuth, getCompanyJobListing);
 router.get("/", getCompanies);
