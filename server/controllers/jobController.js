@@ -197,7 +197,7 @@ export const getJobPosts = async (req, res, next) => {
 
 export const getJobById = async (req, res, next) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
 
     const job = await Jobs.findById({ _id: id }).populate({
       path: "company",
@@ -205,39 +205,53 @@ export const getJobById = async (req, res, next) => {
     });
 
     if (!job) {
-        return res.status(200).send({
-            message: "Job Post Not Found",
-            success: false
-        })
+      return res.status(200).send({
+        message: "Job Post Not Found",
+        success: false,
+      });
     }
 
     //get similar job post
     const searchQuery = {
-        $or: [
-            { jobTitle: { $regex: job?.jobTitle, $options: "i"}}
-            { jobType: { $regex: job?.jobType, $options: "i"}}
-        ]
-    }
+      $or: [
+        { jobTitle: { $regex: job?.jobTitle, $options: "i" } },
+        { jobType: { $regex: job?.jobType, $options: "i" } },
+      ],
+    };
 
-    let queryResult = Jobs.find(searchQuery).populate({
+    let queryResult = Jobs.find(searchQuery)
+      .populate({
         path: "company",
-        select: "-password"
-    }).sort({ _id: -1})
+        select: "-password",
+      })
+      .sort({ _id: -1 });
 
-    queryResult = queryResult.limit(6)
+    queryResult = queryResult.limit(6);
     const similarJobs = await queryResult;
 
     res.status(200).json({
-        success: true,
-        data: job,
-        similarJobs,
+      success: true,
+      data: job,
+      similarJobs,
     });
-
-
   } catch (error) {
     console.log(error);
     res.status(404).json({ message: error.message });
   }
 };
 
-//Good Night 09:55 PM ❤
+export const deleteJobPost = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    await Jobs.findByIdAndDelete(id);
+
+    res.status(200).send({
+      success: true,
+      message: "Job Post Deleted Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ message: error.message });
+  }
+};
