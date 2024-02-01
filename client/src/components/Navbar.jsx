@@ -7,9 +7,16 @@ import { AiOutlineClose, AiOutlineLogout } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import CustomButton from "./CustomButton";
 import { users } from "../utils/data";
+import { useSelector, useDispatch } from "react-redux";
+import { Logout } from "../redux/userSlice";
 
 function MenuList({ user, onClick }) {
-  const handleLogout = () => {};
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(Logout());
+    window.location.replace("/");
+  };
   return (
     <div>
       <Menu as="div" className="inline-block text-left">
@@ -94,7 +101,7 @@ function MenuList({ user, onClick }) {
 }
 
 const Navbar = () => {
-  const user = users[1];
+  const { user } = useSelector((state) => state.user);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleCloseNavbar = () => {
@@ -128,7 +135,7 @@ const Navbar = () => {
               <Link to="user/auth">
                 <CustomButton
                   title="Sign In"
-                  containerStyles="text-blue-600 py-1.5 px-5 focus:outline-none hover-bg-blue-700 hover:text-white rounded-full text-base border border-blue-600"
+                  containerStyles="text-blue-600 py-1.5 px-5 focus:outline-none hover:bg-blue-700 hover:text-white rounded-full text-base border border-blue-600"
                 />
               </Link>
             ) : (
@@ -149,7 +156,7 @@ const Navbar = () => {
         <div
           className={`${
             isOpen ? "absolute flex bg-[#f7fdfd]" : "hidden"
-          } container mx-auto lg:hidden flex-col pl-8 gap-3 py-5`}
+          } container mx-auto lg:hidden flex-col pl-8 gap-3 py-5 z-50`}
         >
           <Link to="/" onClick={handleCloseNavbar}>
             Find Job

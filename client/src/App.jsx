@@ -53,7 +53,7 @@ function App() {
           <Route path={"/job-detail/:id"} element={<JobDetail />} />
         </Route>
 
-        <Route path="/about" element={<About />} />
+        <Route path="/about-us" element={<About />} />
         <Route path="/user-auth" element={<AuthPage />} />
       </Routes>
       {user && <Footer />}
