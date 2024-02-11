@@ -5,7 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { HiLocationMarker } from "react-icons/hi";
 import { AiOutlineMail } from "react-icons/ai";
 import { FiPhoneCall } from "react-icons/fi";
-import { CustomButton, TextInput } from "../components";
+import { CustomButton, Loading, TextInput } from "../components";
+import { NoProfile } from "../assets";
+import { apiRequest, handleFileUpload } from "../utils";
+import { Login } from "../redux/userSlice";
 
 const UserForm = ({ open, setOpen }) => {
   const { user } = useSelector((state) => state.user);
@@ -22,8 +25,34 @@ const UserForm = ({ open, setOpen }) => {
   const dispatch = useDispatch();
   const [profileImage, setProfileImage] = useState("");
   const [uploadCv, setUploadCv] = useState("");
+  const [isSubmit, setIsSubmit] = useState(false);
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
+    setIsSubmit(true);
+    try {
+      const uri = profileImage && (await handleFileUpload(profileImage));
+      const newData = uri ? { ...data, profileUrl: uri } : data;
+
+      const res = await apiRequest({
+        url: "/users/update-user",
+        token: user?.token,
+        data: newData,
+        method: "PUT",
+      });
+
+      if (res) {
+        const newData = { token: res?.token, ...res?.user };
+        dispatch(Login(newData));
+        localStorage.setItem("userInfo", JSON.stringify(res));
+        window.location.reload();
+      }
+      setIsSubmit(false);
+    } catch (error) {
+      setIsSubmit(false);
+
+      console.log(error);
+    }
+  };
 
   const closeModal = () => setOpen(false);
 
@@ -183,11 +212,15 @@ const UserForm = ({ open, setOpen }) => {
                     </div>
 
                     <div className="mt-4">
-                      <CustomButton
-                        type="submit"
-                        containerStyles="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-8 py-2 text-sm font-medium text-white hover:bg-[#1d4fd846] hover:text-[#1d4fd8] focus:outline-none "
-                        title={"Submit"}
-                      />
+                      {isSubmit ? (
+                        <Loading />
+                      ) : (
+                        <CustomButton
+                          type="submit"
+                          containerStyles="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-8 py-2 text-sm font-medium text-white hover:bg-[#1d4fd846] hover:text-[#1d4fd8] focus:outline-none "
+                          title={"Submit"}
+                        />
+                      )}
                     </div>
                   </form>
                 </Dialog.Panel>
@@ -243,7 +276,7 @@ const UserProfile = () => {
 
             <div className="w-full md:w-1/3 h-44">
               <img
-                src={userInfo?.profileUrl}
+                src={userInfo?.profileUrl || NoProfile}
                 alt={userInfo?.firstName}
                 className="w-full h-48 object-contain rounded-lg"
               />

@@ -35,6 +35,34 @@ const JobDetail = () => {
     }
   };
 
+  const handleDeletePost = async () => {
+    // Corrected the next two lines
+    setIsFetching(true);
+
+    try {
+      if (window.confirm("Delete Job Post?")) {
+        const res = await apiRequest({
+          url: "/jobs/delete-job/" + job?._id,
+          token: user?.token,
+          method: "DELETE",
+        });
+
+        if (res?.success) {
+          alert(res?.message);
+          window.location.replace("/");
+        } else {
+          alert(res?.message);
+        }
+      }
+      // Corrected the next line
+      setIsFetching(false);
+    } catch (error) {
+      // Corrected the next line
+      setIsFetching(false);
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     id && getJobDetails();
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
@@ -96,7 +124,7 @@ const JobDetail = () => {
               <div className="bg-[#fed0ab] w-41 h-16 px-6 rounded-lg flex flex-col items-center justify-center">
                 <span className="text-sm">No. of Applications</span>
                 <p className="text-lg font-semibold  text-gray-700">
-                  {job?.applicants?.length}
+                  {job?.application?.length}
                 </p>
               </div>
 
@@ -104,6 +132,13 @@ const JobDetail = () => {
                 <span className="text-sm">No. of Vacancies</span>
                 <p className="text-lg font-semibold text-gray-700">
                   {job?.vacancies}
+                </p>
+              </div>
+
+              <div className="bg-[#cecdff] w-40 h-16 px-6 rounded-lg flex flex-col items-center justify-center">
+                <span className="text-sm">Yr. of Experience</span>
+                <p className="text-lg font-semibold text-gray-700">
+                  {job?.experience}
                 </p>
               </div>
             </div>
@@ -165,8 +200,8 @@ const JobDetail = () => {
               {user?._id === job?.company?._id ? (
                 <CustomButton
                   title="Delete Post"
-                  // onClick={handleDeletePost}
-                  containerStyles={`w-full flex items-center justify-center text-white bg-black py-3 px-5 outline-none rounded-full text-base`}
+                  onClick={handleDeletePost}
+                  containerStyles={`w-full flex items-center justify-center text-white bg-red-700 py-3 px-5 outline-none rounded-full text-base`}
                 />
               ) : (
                 <CustomButton
